@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Node
+node_modules/
+package-lock.json
+
+# Large data / generated files
+*.mp4
+*.png
+*.docx
+*.pptx
+screen_qa.png
+
+# CSV (large genome data — include smaller ones if needed)
+k12info6.csv
+
+# IDE
+.vscode/
+.idea/
+*.swp

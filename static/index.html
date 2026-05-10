@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GENESYS — E. coli K-12 Virtual Cell</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+  <!-- Cytoscape.js -->
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.29.2/dist/cytoscape.min.js"></script>
+  <!-- Cytoscape layouts -->
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.js"></script>
+
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ HEADER ═══ -->
+<header class="genesys-header d-flex align-items-center px-4">
+  <div class="header-logo me-3">
+    <i class="fa-solid fa-dna"></i>
+  </div>
+  <div>
+    <h1 class="header-title mb-0">GENESYS</h1>
+    <span class="header-sub">E. coli K-12 · Virtual Cell Simulation</span>
+  </div>
+  <div class="ms-auto d-flex align-items-center gap-3">
+    <span class="badge-pulse" id="liveBadge">
+      <span class="pulse-dot"></span> LIVE
+    </span>
+    <span class="header-genome-size" id="headerGeneCount">— genes loaded</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ STAT CARDS ═══ -->
+<div class="stats-row px-4 py-2 d-flex gap-3 flex-wrap">
+  <div class="stat-card" id="statTotal">
+    <i class="fa-solid fa-circle-nodes stat-icon"></i>
+    <div>
+      <div class="stat-value" id="statTotalVal">—</div>
+      <div class="stat-label">Total Genes</div>
+    </div>
+  </div>
+  <div class="stat-card" id="statCDS">
+    <i class="fa-solid fa-gear stat-icon" style="color:#4fc3f7"></i>
+    <div>
+      <div class="stat-value" id="statCDSVal">—</div>
+      <div class="stat-label">Protein (CDS)</div>
+    </div>
+  </div>
+  <div class="stat-card" id="statRNA">
+    <i class="fa-solid fa-wave-square stat-icon" style="color:#a5d6a7"></i>
+    <div>
+      <div class="stat-value" id="statRNAVal">—</div>
+      <div class="stat-label">RNA Genes</div>
+    </div>
+  </div>
+  <div class="stat-card" id="statOperons">
+    <i class="fa-solid fa-people-group stat-icon" style="color:#ce93d8"></i>
+    <div>
+      <div class="stat-value" id="statOperonsVal">—</div>
+      <div class="stat-label">Operons / Families</div>
+    </div>
+  </div>
+  <div class="stat-card" id="statPPI">
+    <i class="fa-solid fa-arrows-to-dot stat-icon" style="color:#ffcc80"></i>
+    <div>
+      <div class="stat-value" id="statPPIVal">—</div>
+      <div class="stat-label">PPI Connections</div>
+    </div>
+  </div>
+  <div class="stat-card" id="statPersonalities">
+    <i class="fa-solid fa-robot stat-icon" style="color:#80cbc4"></i>
+    <div>
+      <div class="stat-value" id="statPersonalitiesVal">—</div>
+      <div class="stat-label">Personalities Generated</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ MAIN LAYOUT ═══ -->
+<div class="main-layout">
+
+  <!-- ──────────────────── LEFT PANEL ──────────────────── -->
+  <aside class="left-panel">
+    <!-- Search -->
+    <div class="panel-section">
+      <div class="panel-title"><i class="fa-solid fa-magnifying-glass me-2"></i>Search Gene</div>
+      <div class="search-wrap">
+        <input type="text" id="searchInput" class="form-control gs-input" placeholder="e.g. thrA, rplB, lacZ …"/>
+        <div id="searchDropdown" class="search-dropdown d-none"></div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="panel-section">
+      <div class="panel-title"><i class="fa-solid fa-filter me-2"></i>Filter by Type</div>
+      <div class="d-flex flex-column gap-1" id="typeFilters">
+        <label class="filter-label"><input type="checkbox" class="type-cb" value="CDS" checked/> <span class="dot" style="background:#4fc3f7"></span> CDS (Protein)</label>
+        <label class="filter-label"><input type="checkbox" class="type-cb" value="tRNA" checked/> <span class="dot" style="background:#a5d6a7"></span> tRNA</label>
+        <label class="filter-label"><input type="checkbox" class="type-cb" value="rRNA" checked/> <span class="dot" style="background:#ef9a9a"></span> rRNA</label>
+        <label class="filter-label"><input type="checkbox" class="type-cb" value="ncRNA" checked/> <span class="dot" style="background:#ffcc80"></span> ncRNA</label>
+        <label class="filter-label"><input type="checkbox" class="type-cb" value="mobile_element" checked/> <span class="dot" style="background:#f48fb1"></span> Mobile Element</label>
+        <label class="filter-label"><input type="checkbox" class="type-cb" value="gene" checked/> <span class="dot" style="background:#80deea"></span> Gene (pseudogene)</label>
+        <label class="filter-label"><input type="checkbox" class="type-cb" value="misc_feature" checked/> <span class="dot" style="background:#bcaaa4"></span> Misc Feature</label>
+      </div>
+    </div>
+
+    <!-- Edge visibility -->
+    <div class="panel-section">
+      <div class="panel-title"><i class="fa-solid fa-share-nodes me-2"></i>Show Connections</div>
+      <div class="d-flex flex-column gap-1">
+        <label class="filter-label"><input type="checkbox" id="showPPI" checked/> <span class="line-sample ppi-line"></span> PPI Links</label>
+        <label class="filter-label"><input type="checkbox" id="showOperon" checked/> <span class="line-sample operon-line"></span> Operon / Family</label>
+        <label class="filter-label"><input type="checkbox" id="showLLM" checked/> <span class="line-sample llm-line"></span> AI Connections</label>
+      </div>
+    </div>
+
+    <!-- Network controls -->
+    <div class="panel-section">
+      <div class="panel-title"><i class="fa-solid fa-sliders me-2"></i>Network Controls</div>
+      <div class="d-flex flex-column gap-2">
+        <label class="gs-label">Layout
+          <select id="layoutSelect" class="gs-select">
+            <option value="fcose">Force-Directed (fcose)</option>
+            <option value="circle">Circle</option>
+            <option value="grid">Grid</option>
+            <option value="breadthfirst">Hierarchy</option>
+          </select>
+        </label>
+        <label class="gs-label">Show only genes with PPI
+          <input type="checkbox" id="ppiOnlyToggle" checked/>
+        </label>
+        <label class="gs-label">Node size by
+          <select id="nodeSizeSelect" class="gs-select">
+            <option value="ppi">PPI count</option>
+            <option value="mw">Mol. weight</option>
+            <option value="length">Gene length</option>
+            <option value="uniform">Uniform</option>
+          </select>
+        </label>
+        <button class="gs-btn mt-1" id="fitBtn"><i class="fa-solid fa-expand me-1"></i>Fit View</button>
+        <button class="gs-btn" id="resetBtn"><i class="fa-solid fa-rotate me-1"></i>Reset Layout</button>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="panel-section">
+      <div class="panel-title"><i class="fa-solid fa-circle-info me-2"></i>Legend</div>
+      <div class="legend-grid">
+        <span class="leg-node" style="background:#4fc3f7"></span><span>CDS / Protein</span>
+        <span class="leg-node" style="background:#a5d6a7"></span><span>tRNA</span>
+        <span class="leg-node" style="background:#ef9a9a"></span><span>rRNA</span>
+        <span class="leg-node" style="background:#ffcc80"></span><span>ncRNA</span>
+        <span class="leg-node" style="background:#b39ddb; border-radius:2px; height:6px; width:28px;"></span><span>Operon family</span>
+        <span class="leg-edge ppi-leg"></span><span>PPI edge</span>
+        <span class="leg-edge op-leg"></span><span>Operon edge</span>
+        <span class="leg-edge llm-leg"></span><span>AI edge</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ──────────────────── GRAPH CANVAS ──────────────────── -->
+  <main class="graph-wrap">
+    <div id="cy"></div>
+    <div class="graph-overlay-tl">
+      <button class="icon-btn" id="zoomIn" title="Zoom in"><i class="fa-solid fa-plus"></i></button>
+      <button class="icon-btn" id="zoomOut" title="Zoom out"><i class="fa-solid fa-minus"></i></button>
+      <button class="icon-btn" id="centerBtn" title="Center"><i class="fa-solid fa-crosshairs"></i></button>
+    </div>
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="loader-inner">
+        <div class="dna-spinner"></div>
+        <div class="loader-text">Initializing Virtual Cell…</div>
+        <div class="loader-sub" id="loaderSub">Loading genome data…</div>
+      </div>
+    </div>
+    <div id="tooltip" class="cy-tooltip d-none"></div>
+  </main>
+
+  <!-- ──────────────────── RIGHT PANEL ──────────────────── -->
+  <aside class="right-panel" id="rightPanel">
+    <div id="welcomeMsg" class="welcome-msg">
+      <i class="fa-solid fa-hand-pointer fa-2x mb-3" style="color:#4fc3f7"></i>
+      <p>Click any gene node in the network to explore its identity, function, and personality.</p>
+      <p class="text-muted small">Use search or filters on the left to navigate the 4 700+ gene agents.</p>
+    </div>
+
+    <!-- Gene detail (hidden until selected) -->
+    <div id="geneDetail" class="d-none">
+
+      <!-- Gene header -->
+      <div class="gene-header" id="geneHeaderBar">
+        <div class="gene-badge" id="geneBadgeType">CDS</div>
+        <div>
+          <div class="gene-name-big" id="detailGeneName">—</div>
+          <div class="gene-locus-sub" id="detailLocus">—</div>
+        </div>
+        <button class="ms-auto icon-btn" id="closeDetail" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="gs-tabs" id="detailTabs">
+        <li class="gs-tab active" data-tab="identity">Identity</li>
+        <li class="gs-tab" data-tab="personality">Personality</li>
+        <li class="gs-tab" data-tab="connections">Connections</li>
+        <li class="gs-tab" data-tab="sequence">Sequence</li>
+      </ul>
+
+      <!-- ── Tab: Identity ── -->
+      <div class="tab-content active" id="tab-identity">
+        <div class="info-grid" id="identityGrid"></div>
+      </div>
+
+      <!-- ── Tab: Personality ── -->
+      <div class="tab-content" id="tab-personality">
+        <div id="personalityBox" class="personality-box">
+          <div id="personalityText" class="personality-text"></div>
+          <div id="personalityPlaceholder" class="personality-placeholder">
+            <i class="fa-solid fa-robot fa-2x mb-2"></i>
+            <p>No personality generated yet.</p>
+          </div>
+        </div>
+        <button class="gs-btn-primary w-100 mt-3" id="genPersonalityBtn">
+          <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Generate Personality
+        </button>
+        <div id="personalityStatus" class="mt-2 small text-center"></div>
+      </div>
+
+      <!-- ── Tab: Connections ── -->
+      <div class="tab-content" id="tab-connections">
+        <div class="conn-section">
+          <div class="conn-section-title"><span class="dot" style="background:#546e7a;"></span> PPI Partners</div>
+          <div id="ppiList" class="conn-list"></div>
+        </div>
+        <div class="conn-section mt-3">
+          <div class="conn-section-title"><span class="dot" style="background:#b39ddb;"></span> Operon / Family</div>
+          <div id="operonList" class="conn-list"></div>
+        </div>
+        <div class="conn-section mt-3">
+          <div class="conn-section-title"><span class="dot" style="background:#80cbc4;"></span> AI-Evaluated Connections</div>
+          <div id="llmConnList" class="conn-list"></div>
+          <button class="gs-btn-primary w-100 mt-2" id="genConnectionsBtn">
+            <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Generate AI Connections
+          </button>
+          <div id="connStatus" class="mt-2 small text-center"></div>
+        </div>
+      </div>
+
+      <!-- ── Tab: Sequence ── -->
+      <div class="tab-content" id="tab-sequence">
+        <div id="seqLoading" class="text-center text-muted py-3 d-none">
+          <i class="fa-solid fa-spinner fa-spin me-2"></i>Loading…
+        </div>
+        <div id="seqContent">
+          <button class="gs-btn w-100 mb-3" id="loadSeqBtn">
+            <i class="fa-solid fa-download me-2"></i>Load Sequences
+          </button>
+          <div id="seqDNA" class="d-none">
+            <div class="seq-label">DNA Sequence</div>
+            <textarea class="seq-box" id="seqDNAText" readonly rows="4"></textarea>
+          </div>
+          <div id="seqProt" class="d-none mt-2">
+            <div class="seq-label">Protein Sequence</div>
+            <textarea class="seq-box" id="seqProtText" readonly rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /geneDetail -->
+  </aside>
+
+</div><!-- /main-layout -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
