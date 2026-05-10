@@ -1,4 +1,4 @@
-# 🧬 GENESYS — LLM-Agent Cell Simulator
+# GENESYS — LLM-Agent Cell Simulator
 
 > *"What happens when you give every gene in a living cell its own identity, memory, and personality — and set all 4,762 of them to work together in real time?"*
 
@@ -6,7 +6,7 @@
 
 ---
 
-## 🔬 Key Features
+## Key Features
 
 | Feature | Detail |
 |---|---|
@@ -21,7 +21,7 @@
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone the repository
 ```bash
@@ -57,7 +57,7 @@ python genesys_sim.py
 
 ---
 
-## 🧠 How It Works
+## How It Works
 
 ### Gene Agent Architecture
 Each of the 4,762 genes is an independent AI agent with:
@@ -94,7 +94,7 @@ INJECT environment change
 
 ---
 
-## 📊 Environment Parameters
+## Environment Parameters
 
 | Parameter | Range | Effect |
 |---|---|---|
@@ -106,13 +106,13 @@ INJECT environment change
 | Ethanol | 0 – 10 % | Solvent stress |
 | Heavy metals | 0 – 3 | Metal toxicity |
 | Bile salts | 0 – 3 | Gut environment |
-| Antibiotics | Ciprofloxacin, Ampicillin, Chloramphenicol, Tetracycline |
-| Oxygen | Aerobic / anaerobic |
+| Antibiotics | Ciprofloxacin, Ampicillin, Chloramphenicol, Tetracycline | |
+| Oxygen | Aerobic / anaerobic | |
 | UV radiation | 0 – 3 | DNA damage |
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 GENESYS/
@@ -120,16 +120,12 @@ GENESYS/
 ├── app.py                # Flask web interface (alternative frontend)
 ├── k12info.csv           # E. coli K-12 gene database (4,762 genes, PPM, PPI)
 ├── requirements.txt      # Python dependencies
-├── build_pptx.js         # Scientific presentation generator (PptxGenJS)
-├── build_paper.py        # Hebrew Nature-style paper (python-docx)
-├── build_paper_en.py     # English Nature-style paper (python-docx)
-├── build_linkedin.py     # LinkedIn announcement post (python-docx)
 └── static/               # Web frontend assets
 ```
 
 ---
 
-## 🌿 The Bigger Idea
+## The Bigger Idea
 
 > **LLM-agents are not just for human tasks.**
 
@@ -143,7 +139,7 @@ GENESYS is a proof of principle: any biological entity — gene, cell, organism,
 
 ---
 
-## 📚 References
+## References
 
 1. Blattner F.R. et al. (1997) *Science* 277:1453 — doi:[10.1126/science.277.5331.1453](https://doi.org/10.1126/science.277.5331.1453)
 2. Keseler I.M. et al. (2021) *Nucleic Acids Res* 49:D543 — doi:[10.1093/nar/gkaa1003](https://doi.org/10.1093/nar/gkaa1003)
@@ -154,18 +150,18 @@ GENESYS is a proof of principle: any biological entity — gene, cell, organism,
 
 ---
 
-## 📄 License
+## License
 
 MIT License — open source, free to use and extend.
 
 ---
 
-## 👤 Author
+## Author
 
 **Amir Shamash**  
 Computational Systems Biology · 2026  
-📧 amir.shmaryahu@gmail.com  
-🔗 [LinkedIn](https://www.linkedin.com/in/amir-shamash)
+amir.shmaryahu@gmail.com  
+[LinkedIn](https://www.linkedin.com/in/amir-shamash)
 
 ---
 
