@@ -20,6 +20,9 @@ screen_qa.png
 # CSV (large genome data — include smaller ones if needed)
 k12info6.csv
 
+# Hebrew-only generators (kept locally, not published)
+build_paper.py
+
 # IDE
 .vscode/
 .idea/
