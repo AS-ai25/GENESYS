@@ -1002,7 +1002,7 @@ class GenesysApp(tk.Tk):
         body = tk.Frame(self, bg=BG_DARK)
         body.pack(fill="both", expand=True, padx=6, pady=(0, 4))
 
-        left = tk.Frame(body, bg=BG_CARD, width=280)
+        left = tk.Frame(body, bg=BG_CARD, width=340)
         left.pack(side="left", fill="y", padx=(0, 4))
         left.pack_propagate(False)
         self._build_left(left)
@@ -1020,16 +1020,16 @@ class GenesysApp(tk.Tk):
     def _build_left(self, p):
         def sec(title):
             tk.Label(p, text=title, bg=BG_CARD, fg=ACCENT,
-                     font=("Courier", fs(8), "bold")).pack(anchor="w", padx=10, pady=(7, 0))
-            tk.Frame(p, bg=BG_BORDER, height=1).pack(fill="x", padx=8, pady=(2, 3))
+                     font=("Courier", fs(10), "bold")).pack(anchor="w", padx=10, pady=(8, 0))
+            tk.Frame(p, bg=BG_BORDER, height=1).pack(fill="x", padx=8, pady=(2, 4))
 
         tk.Label(p, text="CELL CONTROL", bg=BG_CARD, fg=FG_TEXT,
-                 font=("Courier", fs(13), "bold")).pack(pady=(10, 2))
+                 font=("Courier", fs(16), "bold")).pack(pady=(12, 4))
 
         sec("SIMULATION SPEED")
         r2 = tk.Frame(p, bg=BG_CARD); r2.pack(fill="x", padx=8, pady=2)
         self._spd_lbl = tk.Label(r2, text="4s", bg=BG_CARD, fg=ACCENT,
-                                  font=("Courier", fs(11), "bold"), width=4)
+                                  font=("Courier", fs(13), "bold"), width=4)
         self._spd_lbl.pack(side="right")
         ttk.Scale(r2, from_=1, to=20, variable=self._speed_var, orient="horizontal",
                   command=self._on_speed).pack(side="left", fill="x", expand=True)
@@ -1039,7 +1039,7 @@ class GenesysApp(tk.Tk):
                         variable=self._llm_var,
                         command=self._on_llm).pack(anchor="w", padx=10)
         tk.Label(p, text="  Off = fast keyword mode",
-                 bg=BG_CARD, fg=FG_DIM, font=("Courier", fs(7))).pack(anchor="w", padx=10)
+                 bg=BG_CARD, fg=FG_DIM, font=("Courier", fs(9))).pack(anchor="w", padx=10)
 
         # Backend selector
         _llm_row = tk.Frame(p, bg=BG_CARD); _llm_row.pack(fill="x", padx=10, pady=2)
@@ -1054,27 +1054,27 @@ class GenesysApp(tk.Tk):
         self._ollama_row = tk.Frame(p, bg=BG_CARD)
         self._ollama_row.pack(fill="x", padx=10, pady=1)
         tk.Label(self._ollama_row, text="Model:", bg=BG_CARD, fg=FG_DIM,
-                 font=("Courier", fs(8))).pack(side="left")
+                 font=("Courier", fs(9))).pack(side="left")
         tk.Entry(self._ollama_row, textvariable=self._ollama_model_var,
                  bg="#0d1a2a", fg=ACCENT, insertbackground=ACCENT,
-                 font=("Courier", fs(9)), width=14,
+                 font=("Courier", fs(10)), width=12,
                  relief="flat", bd=1).pack(side="left", padx=4)
         tk.Button(self._ollama_row, text="✓", bg="#1a3a1a", fg="#4dff88",
-                  font=("Courier", fs(8)), relief="flat", cursor="hand2",
+                  font=("Courier", fs(9)), relief="flat", cursor="hand2",
                   command=self._on_ollama_model_apply).pack(side="left")
         tk.Label(p, text="  llama3 / mistral / gemma2 …",
-                 bg=BG_CARD, fg=FG_DIM, font=("Courier", fs(7))).pack(anchor="w", padx=10)
+                 bg=BG_CARD, fg=FG_DIM, font=("Courier", fs(9))).pack(anchor="w", padx=10)
 
         # Test connection button + status label
         self._ollama_test_row = tk.Frame(p, bg=BG_CARD)
         self._ollama_test_row.pack(fill="x", padx=10, pady=2)
         tk.Button(self._ollama_test_row, text="🔌 Test Connection",
-                  bg="#0d1a2a", fg=ACCENT, font=("Courier", fs(8)),
+                  bg="#0d1a2a", fg=ACCENT, font=("Courier", fs(9)),
                   relief="flat", cursor="hand2",
                   command=self._on_ollama_test).pack(side="left")
         self._ollama_status_lbl = tk.Label(self._ollama_test_row,
                   text="●  not tested", bg=BG_CARD, fg=FG_DIM,
-                  font=("Courier", fs(8)))
+                  font=("Courier", fs(9)))
         self._ollama_status_lbl.pack(side="left", padx=8)
 
         self._refresh_ollama_row()
@@ -1082,7 +1082,7 @@ class GenesysApp(tk.Tk):
         sec("NODE SIZE")
         r_ns = tk.Frame(p, bg=BG_CARD); r_ns.pack(fill="x", padx=8, pady=2)
         self._ns_lbl = tk.Label(r_ns, text="1x", bg=BG_CARD, fg=ACCENT,
-                                font=("Courier", fs(11), "bold"), width=4)
+                                font=("Courier", fs(13), "bold"), width=4)
         self._ns_lbl.pack(side="right")
         self._ns_var = tk.DoubleVar(value=1.0)
         ttk.Scale(r_ns, from_=0.5, to=30.0, variable=self._ns_var, orient="horizontal",
@@ -1104,7 +1104,7 @@ class GenesysApp(tk.Tk):
                         command=self._redraw_graph).pack(anchor="w", padx=10, pady=1)
 
         sec("ACTIONS")
-        bcfg = dict(font=("Courier", fs(9), "bold"), relief="flat", cursor="hand2", pady=5)
+        bcfg = dict(font=("Courier", fs(11), "bold"), relief="flat", cursor="hand2", pady=6)
         self._btn_build = tk.Button(p, text="⬡  Build Cell  (all 4761)",
                                      bg=BG_INPUT, fg=FG_TEXT,
                                      command=self._do_build, **bcfg)
@@ -1129,11 +1129,11 @@ class GenesysApp(tk.Tk):
                     "Oxygen","Iron","Antibiotic","SOS level"]:
             row = tk.Frame(p, bg=BG_CARD); row.pack(fill="x", padx=10, pady=0)
             tk.Label(row, text=f"{key}:", bg=BG_CARD, fg=FG_DIM,
-                     font=("Courier", fs(7)), width=13, anchor="w").pack(side="left")
+                     font=("Courier", fs(9)), width=13, anchor="w").pack(side="left")
             sv = tk.StringVar(value="—")
             self._stat_vars[key] = sv
             tk.Label(row, textvariable=sv, bg=BG_CARD, fg=FG_TEXT,
-                     font=("Courier", fs(7), "bold")).pack(side="left")
+                     font=("Courier", fs(9), "bold")).pack(side="left")
 
     # ── CENTER PANEL ─────────────────────────────────────────
     def _build_center(self, p):
