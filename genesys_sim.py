@@ -1112,22 +1112,27 @@ class GenesysApp(tk.Tk):
 
         sec("ACTIONS")
         bcfg = dict(font=("Courier", fs(11), "bold"), relief="flat", cursor="hand2", pady=6)
-        self._btn_build = tk.Button(p, text="⬡  Build Cell  (all 4761)",
-                                     bg=BG_INPUT, fg=FG_TEXT,
+        # Row 1: Build Cell + Reset
+        _row1 = tk.Frame(p, bg=BG_CARD); _row1.pack(fill="x", padx=8, pady=2)
+        self._btn_build = tk.Button(_row1, text="Build Cell",
+                                     bg="#f5c400", fg="#000000",
                                      command=self._do_build, **bcfg)
-        self._btn_build.pack(fill="x", padx=8, pady=2)
-        self._btn_start = tk.Button(p, text="▶  Start Auto-Rounds",
-                                     bg=SUCCESS, fg=BG_DARK,
-                                     command=self._do_start, state="disabled", **bcfg)
-        self._btn_start.pack(fill="x", padx=8, pady=2)
-        self._btn_stop  = tk.Button(p, text="⏸  Pause",
-                                     bg=DANGER, fg=FG_TEXT,
-                                     command=self._do_stop, state="disabled", **bcfg)
-        self._btn_stop.pack(fill="x", padx=8, pady=2)
-        self._btn_reset = tk.Button(p, text="↺  Reset",
+        self._btn_build.pack(side="left", fill="x", expand=True, padx=(0, 2))
+        self._btn_reset = tk.Button(_row1, text="↺  Reset",
                                      bg=BG_INPUT, fg=FG_DIM,
                                      command=self._do_reset, **bcfg)
-        self._btn_reset.pack(fill="x", padx=8, pady=2)
+        self._btn_reset.pack(side="left", fill="x", expand=True, padx=(2, 0))
+
+        # Row 2: Start + Pause
+        _row2 = tk.Frame(p, bg=BG_CARD); _row2.pack(fill="x", padx=8, pady=2)
+        self._btn_start = tk.Button(_row2, text="▶  Start",
+                                     bg=SUCCESS, fg=BG_DARK,
+                                     command=self._do_start, state="disabled", **bcfg)
+        self._btn_start.pack(side="left", fill="x", expand=True, padx=(0, 2))
+        self._btn_stop  = tk.Button(_row2, text="⏸  Pause",
+                                     bg=DANGER, fg=FG_TEXT,
+                                     command=self._do_stop, state="disabled", **bcfg)
+        self._btn_stop.pack(side="left", fill="x", expand=True, padx=(2, 0))
 
         sec("LIVE STATS")
         self._stat_vars: Dict[str, tk.StringVar] = {}
