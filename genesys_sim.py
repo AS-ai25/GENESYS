@@ -1130,7 +1130,7 @@ class GenesysApp(tk.Tk):
                    pady=(0 if row == 1 else 0, 3 if row == 0 else 0))
             return b
 
-        self._btn_build = _abtn("Build Cell", "#f5c400", "#000000", 0, 0, self._do_build)
+        self._btn_build = _abtn("Build Cell", "#f5c400", "#000000", 0, 0, self._do_build, font_size=fs(9))
         self._btn_reset = _abtn("↺  Reset",   BG_INPUT,  FG_DIM,   0, 1, self._do_reset)
         self._btn_start = _abtn("▶  Start",   SUCCESS,   BG_DARK,  1, 0, self._do_start, state="disabled")
         self._btn_stop  = _abtn("⏸  Pause",   DANGER,    FG_TEXT,  1, 1, self._do_stop,  state="disabled")
