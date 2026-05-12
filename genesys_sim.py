@@ -1034,21 +1034,28 @@ class GenesysApp(tk.Tk):
         ttk.Scale(r2, from_=1, to=20, variable=self._speed_var, orient="horizontal",
                   command=self._on_speed).pack(side="left", fill="x", expand=True)
 
+        _ck = dict(bg=BG_CARD, fg=FG_TEXT, selectcolor=BG_CARD,
+                   activebackground=BG_CARD, activeforeground=ACCENT,
+                   font=("Courier", fs(9)))
+        _rb = dict(bg=BG_CARD, fg=FG_TEXT, selectcolor=BG_CARD,
+                   activebackground=BG_CARD, activeforeground=ACCENT,
+                   font=("Courier", fs(9)))
+
         sec("LLM REACTIONS")
-        ttk.Checkbutton(p, text="Enable LLM (slower)",
-                        variable=self._llm_var,
-                        command=self._on_llm).pack(anchor="w", padx=10)
+        tk.Checkbutton(p, text="Enable LLM (slower)",
+                       variable=self._llm_var,
+                       command=self._on_llm, **_ck).pack(anchor="w", padx=10)
         tk.Label(p, text="  Off = fast keyword mode",
                  bg=BG_CARD, fg=FG_DIM, font=("Courier", fs(9))).pack(anchor="w", padx=10)
 
         # Backend selector
         _llm_row = tk.Frame(p, bg=BG_CARD); _llm_row.pack(fill="x", padx=10, pady=2)
-        ttk.Radiobutton(_llm_row, text="Claude API",
-                        variable=self._llm_backend_var, value="claude",
-                        command=self._on_llm_backend).pack(side="left")
-        ttk.Radiobutton(_llm_row, text="Ollama",
-                        variable=self._llm_backend_var, value="ollama",
-                        command=self._on_llm_backend).pack(side="left", padx=(8, 0))
+        tk.Radiobutton(_llm_row, text="Claude API",
+                       variable=self._llm_backend_var, value="claude",
+                       command=self._on_llm_backend, **_rb).pack(side="left")
+        tk.Radiobutton(_llm_row, text="Ollama",
+                       variable=self._llm_backend_var, value="ollama",
+                       command=self._on_llm_backend, **_rb).pack(side="left", padx=(8, 0))
 
         # Ollama model name row (shown only when Ollama selected)
         self._ollama_row = tk.Frame(p, bg=BG_CARD)
@@ -1090,18 +1097,18 @@ class GenesysApp(tk.Tk):
 
         sec("GRAPH VIEW")
         for mode in self.COLOR_MODES:
-            ttk.Radiobutton(p, text=mode, variable=self._color_mode,
-                            value=mode, command=self._redraw_graph).pack(
+            tk.Radiobutton(p, text=mode, variable=self._color_mode,
+                           value=mode, command=self._redraw_graph, **_rb).pack(
                 anchor="w", padx=16, pady=1)
-        ttk.Checkbutton(p, text="Show PPI edges (active genes)",
-                        variable=self._show_ppi,
-                        command=self._redraw_graph).pack(anchor="w", padx=10, pady=1)
-        ttk.Checkbutton(p, text="Show Operon edges",
-                        variable=self._show_op,
-                        command=self._redraw_graph).pack(anchor="w", padx=10, pady=1)
-        ttk.Checkbutton(p, text="Show gene labels",
-                        variable=self._show_labels,
-                        command=self._redraw_graph).pack(anchor="w", padx=10, pady=1)
+        tk.Checkbutton(p, text="Show PPI edges (active genes)",
+                       variable=self._show_ppi,
+                       command=self._redraw_graph, **_ck).pack(anchor="w", padx=10, pady=1)
+        tk.Checkbutton(p, text="Show Operon edges",
+                       variable=self._show_op,
+                       command=self._redraw_graph, **_ck).pack(anchor="w", padx=10, pady=1)
+        tk.Checkbutton(p, text="Show gene labels",
+                       variable=self._show_labels,
+                       command=self._redraw_graph, **_ck).pack(anchor="w", padx=10, pady=1)
 
         sec("ACTIONS")
         bcfg = dict(font=("Courier", fs(11), "bold"), relief="flat", cursor="hand2", pady=6)
