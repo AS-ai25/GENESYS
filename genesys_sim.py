@@ -1111,28 +1111,29 @@ class GenesysApp(tk.Tk):
                        command=self._redraw_graph, **_ck).pack(anchor="w", padx=10, pady=1)
 
         sec("ACTIONS")
-        bcfg = dict(font=("Courier", fs(11), "bold"), relief="flat", cursor="hand2", pady=6)
-        # Row 1: Build Cell + Reset
-        _row1 = tk.Frame(p, bg=BG_CARD); _row1.pack(fill="x", padx=8, pady=2)
-        self._btn_build = tk.Button(_row1, text="Build Cell",
-                                     bg="#f5c400", fg="#000000",
-                                     command=self._do_build, **bcfg)
-        self._btn_build.pack(side="left", fill="x", expand=True, padx=(0, 2))
-        self._btn_reset = tk.Button(_row1, text="↺  Reset",
-                                     bg=BG_INPUT, fg=FG_DIM,
-                                     command=self._do_reset, **bcfg)
-        self._btn_reset.pack(side="left", fill="x", expand=True, padx=(2, 0))
+        # 2×2 grid — all 4 cells exactly equal size
+        _bg = tk.Frame(p, bg=BG_CARD)
+        _bg.pack(fill="x", padx=8, pady=4)
+        _bg.columnconfigure(0, weight=1, uniform="act")
+        _bg.columnconfigure(1, weight=1, uniform="act")
+        _bg.rowconfigure(0, weight=1, uniform="act")
+        _bg.rowconfigure(1, weight=1, uniform="act")
 
-        # Row 2: Start + Pause
-        _row2 = tk.Frame(p, bg=BG_CARD); _row2.pack(fill="x", padx=8, pady=2)
-        self._btn_start = tk.Button(_row2, text="▶  Start",
-                                     bg=SUCCESS, fg=BG_DARK,
-                                     command=self._do_start, state="disabled", **bcfg)
-        self._btn_start.pack(side="left", fill="x", expand=True, padx=(0, 2))
-        self._btn_stop  = tk.Button(_row2, text="⏸  Pause",
-                                     bg=DANGER, fg=FG_TEXT,
-                                     command=self._do_stop, state="disabled", **bcfg)
-        self._btn_stop.pack(side="left", fill="x", expand=True, padx=(2, 0))
+        def _abtn(text, bg, fg, row, col, cmd, state="normal", font_size=None):
+            fsize = font_size if font_size else fs(11)
+            b = tk.Button(_bg, text=text, bg=bg, fg=fg,
+                          font=("Courier", fsize, "bold"),
+                          relief="flat", cursor="hand2",
+                          pady=10, command=cmd, state=state)
+            b.grid(row=row, column=col, sticky="nsew",
+                   padx=(0 if col == 1 else 0, 3 if col == 0 else 0),
+                   pady=(0 if row == 1 else 0, 3 if row == 0 else 0))
+            return b
+
+        self._btn_build = _abtn("Build Cell", "#f5c400", "#000000", 0, 0, self._do_build)
+        self._btn_reset = _abtn("↺  Reset",   BG_INPUT,  FG_DIM,   0, 1, self._do_reset)
+        self._btn_start = _abtn("▶  Start",   SUCCESS,   BG_DARK,  1, 0, self._do_start, state="disabled")
+        self._btn_stop  = _abtn("⏸  Pause",   DANGER,    FG_TEXT,  1, 1, self._do_stop,  state="disabled")
 
         sec("LIVE STATS")
         self._stat_vars: Dict[str, tk.StringVar] = {}
