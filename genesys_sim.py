@@ -885,6 +885,29 @@ class SimulationEngine:
             for p in g.ppi_partners[:3]:
                 if p["name"] in self.gene_map:
                     self.last_edges.append((name, p["name"], "ppi", p["score"]))
+
+        # Show top active genes with reactions in the feed
+        top = sorted(self.all_genes, key=lambda g: abs(g.activity), reverse=True)
+        shown = [g for g in top if abs(g.activity) > 0.15][:8]
+        if shown:
+            for g in shown:
+                if self.use_llm:
+                    reaction = self.active_llm.generate_reaction(g, self.env_changed)
+                else:
+                    if g.activity > 0.2:    reaction = random.choice(MOCK_REACTIONS["activated"])
+                    elif g.activity < -0.2: reaction = random.choice(MOCK_REACTIONS["repressed"])
+                    else:                   reaction = random.choice(MOCK_REACTIONS["neutral"])
+                g.record(reaction)
+                tag = "positive" if g.activity > 0.15 else "negative" if g.activity < -0.15 else "neutral"
+                self._feed_cb(
+                    f"  [{g.gene_type:4s}] {g.gene_name:10s}  {g.activity:+.2f}"
+                    f"  ({g.activity_label.split()[0]})\n"
+                    f"    ↳ {reaction}\n",
+                    tag,
+                )
+        else:
+            self._feed_cb("  (all genes near baseline — no significant activity)\n", "neutral")
+
         self._update_cb()
 
     def ensure_personality(self, agent: GeneAgent):
