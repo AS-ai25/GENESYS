@@ -886,12 +886,16 @@ class SimulationEngine:
                 if p["name"] in self.gene_map:
                     self.last_edges.append((name, p["name"], "ppi", p["score"]))
 
-        # Show top active genes with fast keyword reactions (never LLM here)
+        # Show top active genes — use LLM if enabled, keywords otherwise
         top = sorted(self.all_genes, key=lambda g: abs(g.activity), reverse=True)
-        active = [g for g in top if abs(g.activity) > 0.15][:8]
+        # LLM mode: show fewer genes so API calls don't block; keyword: show more
+        limit = 3 if self.use_llm else 8
+        active = [g for g in top if abs(g.activity) > 0.15][:limit]
         if active:
             for g in active:
-                if g.activity > 0.2:
+                if self.use_llm:
+                    reaction = self.active_llm.generate_reaction(g, self.env_changed)
+                elif g.activity > 0.2:
                     reaction = random.choice(MOCK_REACTIONS["activated"])
                 elif g.activity < -0.2:
                     reaction = random.choice(MOCK_REACTIONS["repressed"])
@@ -900,7 +904,8 @@ class SimulationEngine:
                 g.record(reaction)
                 tag = "positive" if g.activity > 0.15 else "negative"
                 self._feed_cb(
-                    f"  [{g.gene_type:4s}] {g.gene_name:10s}  {g.activity:+.2f}"
+                    f"  [{g.gene_type:4s}] {g.gene_name:10s}  "
+                    f"{g.prev_activity:+.2f} → {g.activity:+.2f}"
                     f"  ({g.activity_label.split()[0]})\n"
                     f"    ↳ {reaction}\n",
                     tag,
