@@ -933,9 +933,13 @@ class GenesysApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("GENESYS v2.0  |  E. coli K-12 — All 4761 Gene Agents")
-        self.geometry("1800x1050")
         self.configure(bg=BG_DARK)
         self.resizable(True, True)
+        self.update_idletasks()
+        sw = self.winfo_screenwidth()
+        sh = self.winfo_screenheight()
+        self.geometry(f"{sw}x{sh}+0+0")
+        self.state("zoomed")          # maximize on Windows
 
         self._selected:   Optional[GeneAgent] = None
         self._node_pos:   Dict[str, Tuple[float, float]] = {}
@@ -998,7 +1002,7 @@ class GenesysApp(tk.Tk):
         body = tk.Frame(self, bg=BG_DARK)
         body.pack(fill="both", expand=True, padx=6, pady=(0, 4))
 
-        left = tk.Frame(body, bg=BG_CARD, width=250)
+        left = tk.Frame(body, bg=BG_CARD, width=280)
         left.pack(side="left", fill="y", padx=(0, 4))
         left.pack_propagate(False)
         self._build_left(left)
@@ -1007,7 +1011,7 @@ class GenesysApp(tk.Tk):
         center.pack(side="left", fill="both", expand=True, padx=(0, 4))
         self._build_center(center)
 
-        right = tk.Frame(body, bg=BG_DARK, width=470)
+        right = tk.Frame(body, bg=BG_DARK, width=600)
         right.pack(side="left", fill="y")
         right.pack_propagate(False)
         self._build_right(right)
@@ -1016,11 +1020,11 @@ class GenesysApp(tk.Tk):
     def _build_left(self, p):
         def sec(title):
             tk.Label(p, text=title, bg=BG_CARD, fg=ACCENT,
-                     font=("Courier", fs(7), "bold")).pack(anchor="w", padx=8, pady=(7, 0))
+                     font=("Courier", fs(8), "bold")).pack(anchor="w", padx=10, pady=(7, 0))
             tk.Frame(p, bg=BG_BORDER, height=1).pack(fill="x", padx=8, pady=(2, 3))
 
         tk.Label(p, text="CELL CONTROL", bg=BG_CARD, fg=FG_TEXT,
-                 font=("Courier", fs(12), "bold")).pack(pady=(10, 2))
+                 font=("Courier", fs(13), "bold")).pack(pady=(10, 2))
 
         sec("SIMULATION SPEED")
         r2 = tk.Frame(p, bg=BG_CARD); r2.pack(fill="x", padx=8, pady=2)
@@ -1141,7 +1145,7 @@ class GenesysApp(tk.Tk):
         tk.Label(hrow, text="outer=forward strand  inner=reverse  click=inspect  color=activity",
                  bg=BG_CARD, fg=FG_DIM, font=("Courier", fs(7))).pack(side="right")
 
-        self._fig = plt.figure(figsize=(8.5, 8), facecolor=BG_CARD)
+        self._fig = plt.figure(figsize=(7, 8), facecolor=BG_CARD)
         self._ax = self._fig.add_subplot(111, projection='3d')
         self._ax.set_facecolor(BG_DARK)
         plt.subplots_adjust(left=0.01, right=0.99, top=0.99, bottom=0.04)
@@ -1182,17 +1186,17 @@ class GenesysApp(tk.Tk):
 
         tk.Label(env_outer, text="🌡  CELL ENVIRONMENT CONTROL",
                  bg=BG_CARD, fg=ACCENT,
-                 font=("Courier", fs(10), "bold")).pack(anchor="w", padx=10, pady=(8, 3))
+                 font=("Courier", fs(12), "bold")).pack(anchor="w", padx=10, pady=(8, 4))
 
         ec = env_outer  # shorthand
 
         def env_slider(lbl, var, from_, to, fmt, row_frame=None):
             rf = row_frame or tk.Frame(ec, bg=BG_CARD)
-            rf.pack(fill="x", padx=10, pady=1)
+            rf.pack(fill="x", padx=10, pady=2)
             tk.Label(rf, text=f"{lbl}:", bg=BG_CARD, fg=FG_DIM,
-                     font=("Courier", fs(7)), width=16, anchor="w").pack(side="left")
+                     font=("Courier", fs(9)), width=18, anchor="w").pack(side="left")
             val_lbl = tk.Label(rf, text=fmt.format(var.get()), bg=BG_CARD, fg=WARNING,
-                                font=("Courier", fs(8), "bold"), width=8)
+                                font=("Courier", fs(9), "bold"), width=8)
             val_lbl.pack(side="right")
             ttk.Scale(rf, from_=from_, to=to, variable=var, orient="horizontal",
                       command=lambda v, l=val_lbl, f=fmt: l.config(text=f.format(float(v)))
@@ -1295,12 +1299,12 @@ class GenesysApp(tk.Tk):
         fc.pack(fill="both", expand=True, pady=(0, 3))
         fh = tk.Frame(fc, bg=BG_CARD); fh.pack(fill="x", padx=10, pady=(5, 1))
         tk.Label(fh, text="⚗  CELL REACTION FEED", bg=BG_CARD, fg=ACCENT,
-                 font=("Courier", fs(9), "bold")).pack(side="left")
+                 font=("Courier", fs(11), "bold")).pack(side="left")
         tk.Button(fh, text="clear", bg=BG_CARD, fg=FG_DIM,
                   font=("Courier", fs(7)), relief="flat", cursor="hand2",
                   command=self._clear_feed).pack(side="right")
         self._feed = scrolledtext.ScrolledText(
-            fc, bg=BG_DARK, fg=FG_TEXT, font=("Courier", fs(7)),
+            fc, bg=BG_DARK, fg=FG_TEXT, font=("Courier", fs(9)),
             relief="flat", state="disabled", wrap="word")
         self._feed.pack(fill="both", expand=True, padx=4, pady=(0, 3))
         for tag, col, bold in [
